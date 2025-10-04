@@ -109,30 +109,29 @@ Date</textarea>
   }
 
 function spin() {
-  if (spinning || numbers.length === 0) return;
+  if (spinning || numbers.length === 0) return; // use 'numbers' not 'items'
   spinning = true;
 
   const sliceAngle = 2 * Math.PI / numbers.length;
 
-  // pick a truly random target number
+  // pick a random target number
   const targetIndex = Math.floor(Math.random() * numbers.length);
 
-  // pick a random number of full rotations for the spin animation
+  // add extra full rotations for visual effect
   const extraRotations = Math.floor(Math.random() * 10) + 10;
 
-  // calculate the target angle so the selected number lands at the arrow
-  // no internal slice offset; all numbers have equal chance
+  // calculate the exact target angle so the chosen number lands at the arrow
   const targetAngle = extraRotations * 2 * Math.PI +
                       (numbers.length - targetIndex) * sliceAngle - sliceAngle / 2;
 
-  const spinDuration = 3; // fixed spin duration
+  const spinDuration = 3; // spin time in seconds
 
-  // reset transition to start from 0 each spin
+  // reset transform for each spin
   canvas.style.transition = 'none';
   canvas.style.transform = `rotate(0rad)`;
   void canvas.offsetWidth; // force reflow
 
-  // animate spin
+  // animate the spin
   canvas.style.transition = `transform ${spinDuration}s cubic-bezier(0.33, 1, 0.68, 1)`;
   canvas.style.transform = `rotate(${targetAngle}rad)`;
 
@@ -141,6 +140,7 @@ function spin() {
     angle = targetAngle % (2 * Math.PI);
   }, spinDuration * 1000);
 }
+
 
 
   buildBtn.addEventListener("click", buildSpinner);
