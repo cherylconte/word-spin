@@ -110,26 +110,35 @@ Date</textarea>
     });
   }
 
-  function spin() {
-    if (spinning || items.length === 0) return;
-    spinning = true;
+ function spin() {
+  if (spinning || items.length === 0) return;
+  spinning = true;
 
-    const extraRotations = Math.floor(Math.random() * 8) + 12;
-    const randomOffset = Math.random() * 2 * Math.PI;
-    const targetAngle = extraRotations * 2 * Math.PI + randomOffset;
+  const radius = items.length;
+  const sliceAngle = 2 * Math.PI / radius;
 
-    canvas.style.transition = 'none';
-    canvas.style.transform = `rotate(0rad)`;
-    void canvas.offsetWidth;
+  // pick a random target slice
+  const targetIndex = Math.floor(Math.random() * items.length);
 
-    canvas.style.transition = 'transform 3s cubic-bezier(0.33, 1, 0.68, 1)';
-    canvas.style.transform = `rotate(${targetAngle}rad)`;
+  // add extra full rotations
+  const extraRotations = Math.floor(Math.random() * 8) + 12;
 
-    setTimeout(() => {
-      spinning = false;
-      angle = targetAngle % (2 * Math.PI);
-    }, 3000);
-  }
+  // calculate target angle so the chosen slice lands at the arrow
+  const targetAngle = extraRotations * 2 * Math.PI + (items.length - targetIndex) * sliceAngle - sliceAngle/2;
+
+  canvas.style.transition = 'none';
+  canvas.style.transform = `rotate(0rad)`;
+  void canvas.offsetWidth;
+
+  canvas.style.transition = 'transform 3s cubic-bezier(0.33, 1, 0.68, 1)';
+  canvas.style.transform = `rotate(${targetAngle}rad)`;
+
+  setTimeout(() => {
+    spinning = false;
+    angle = targetAngle % (2 * Math.PI);
+  }, 3000);
+}
+
 
   buildBtn.addEventListener("click", buildSpinner);
   spinnerContainer.addEventListener("click", spin);
