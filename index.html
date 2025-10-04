@@ -108,27 +108,24 @@ Date</textarea>
     });
   }
 
-  function spin() {
+function spin() {
   if (spinning || numbers.length === 0) return;
   spinning = true;
 
   const sliceAngle = 2 * Math.PI / numbers.length;
 
-  // pick a random target slice correctly
+  // pick a truly random target number
   const targetIndex = Math.floor(Math.random() * numbers.length);
 
-  // add extra full rotations for randomness
-  const extraRotations = Math.floor(Math.random() * 15) + 15;
+  // pick a random number of full rotations for the spin animation
+  const extraRotations = Math.floor(Math.random() * 10) + 10;
 
-  // small random offset inside the slice
-  const randomOffsetWithinSlice = (Math.random() - 0.5) * sliceAngle * 0.9;
-
-  // calculate new absolute angle ignoring previous angle
+  // calculate the target angle so the selected number lands at the arrow
+  // no internal slice offset; all numbers have equal chance
   const targetAngle = extraRotations * 2 * Math.PI +
-                      (numbers.length - targetIndex) * sliceAngle -
-                      sliceAngle / 2 + randomOffsetWithinSlice;
+                      (numbers.length - targetIndex) * sliceAngle - sliceAngle / 2;
 
-  const spinDuration = 2.5 + Math.random() * 1.5; // random duration for natural spin
+  const spinDuration = 3; // fixed spin duration
 
   // reset transition to start from 0 each spin
   canvas.style.transition = 'none';
@@ -141,9 +138,10 @@ Date</textarea>
 
   setTimeout(() => {
     spinning = false;
-    angle = targetAngle % (2 * Math.PI); // store new angle
+    angle = targetAngle % (2 * Math.PI);
   }, spinDuration * 1000);
 }
+
 
   buildBtn.addEventListener("click", buildSpinner);
   spinnerContainer.addEventListener("click", spin);
