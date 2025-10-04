@@ -9,12 +9,13 @@
   #controls { padding: 15px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
   #controls div { display: flex; flex-direction: column; min-width: 120px; }
   label { font-size: 0.9rem; margin-bottom: 4px; }
-  input[type=text], input[type=number], input[type=color] { padding: 5px; font-size: 1rem; }
+  textarea, input[type=number], input[type=color] { padding: 5px; font-size: 1rem; }
+  textarea { resize: none; }
   button { padding: 10px 20px; font-size: 1rem; border: none; background: #0077cc; color: white; border-radius: 6px; cursor: pointer; }
   button:hover { background: #005fa3; }
   #colorPickers { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
   #spinner-container { position: relative; margin: 20px auto; width: 500px; height: 500px; }
-  #spinner { width: 100%; height: 100%; border-radius: 50%; touch-action: manipulation; }
+  #spinner { width: 100%; height: 100%; border-radius: 50%; touch-action: manipulation; transform-origin: 50% 50%; }
   #arrow { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 40px; color: red; z-index: 10; }
 </style>
 </head>
@@ -23,7 +24,7 @@
 <div id="controls">
   <div>
     <label for="items">Spinner Items (one per line):</label>
-    <textarea id="items" rows="4" style="resize:none;">Apple
+    <textarea id="items" rows="4">Apple
 Banana
 Cherry
 Date</textarea>
@@ -112,21 +113,19 @@ Date</textarea>
     if (spinning || items.length === 0) return;
     spinning = true;
 
-    // normalize angle
     angle = angle % (2 * Math.PI);
-
     const sliceAngle = 2 * Math.PI / items.length;
-    const targetIndex = Math.floor(Math.random() * items.length);
 
-    // more rotations + small random offset
+    // pick random slice and random position within it
+    const targetIndex = Math.floor(Math.random() * items.length);
+    const randomOffsetWithinSlice = Math.random() * sliceAngle;
+
+    // extra rotations for effect
     const extraRotations = Math.floor(Math.random() * 15) + 15; // 15-29 rotations
-    const randomOffsetWithinSlice = (Math.random() - 0.5) * sliceAngle * 0.9;
     const targetAngle = angle + extraRotations * 2 * Math.PI + (items.length - targetIndex) * sliceAngle - sliceAngle/2 + randomOffsetWithinSlice;
 
-    // random spin duration for variety
     const spinDuration = 2.5 + Math.random() * 1.5; // 2.5s - 4s
 
-    // reset transition for instant jump to current angle
     canvas.style.transition = 'none';
     canvas.style.transform = `rotate(${angle}rad)`;
     void canvas.offsetWidth; // force reflow
@@ -157,4 +156,5 @@ Date</textarea>
 
 </body>
 </html>
+
 
