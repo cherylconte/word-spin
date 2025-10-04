@@ -109,36 +109,41 @@ Date</textarea>
   }
 
   function spin() {
-    if (spinning || items.length === 0) return;
-    spinning = true;
+  if (spinning || numbers.length === 0) return;
+  spinning = true;
 
-    // normalize angle
-    angle = angle % (2 * Math.PI);
+  const sliceAngle = 2 * Math.PI / numbers.length;
 
-    const sliceAngle = 2 * Math.PI / items.length;
-    const targetIndex = Math.floor(Math.random() * items.length);
+  // pick a random target slice correctly
+  const targetIndex = Math.floor(Math.random() * numbers.length);
 
-    // more rotations + small random offset
-    const extraRotations = Math.floor(Math.random() * 15) + 15; // 15-29 rotations
-    const randomOffsetWithinSlice = (Math.random() - 0.5) * sliceAngle * 0.9;
-    const targetAngle = angle + extraRotations * 2 * Math.PI + (items.length - targetIndex) * sliceAngle - sliceAngle/2 + randomOffsetWithinSlice;
+  // add extra full rotations for randomness
+  const extraRotations = Math.floor(Math.random() * 15) + 15;
 
-    // random spin duration for variety
-    const spinDuration = 2.5 + Math.random() * 1.5; // 2.5s - 4s
+  // small random offset inside the slice
+  const randomOffsetWithinSlice = (Math.random() - 0.5) * sliceAngle * 0.9;
 
-    // reset transition for instant jump to current angle
-    canvas.style.transition = 'none';
-    canvas.style.transform = `rotate(${angle}rad)`;
-    void canvas.offsetWidth; // force reflow
+  // calculate new absolute angle ignoring previous angle
+  const targetAngle = extraRotations * 2 * Math.PI +
+                      (numbers.length - targetIndex) * sliceAngle -
+                      sliceAngle / 2 + randomOffsetWithinSlice;
 
-    canvas.style.transition = `transform ${spinDuration}s cubic-bezier(0.33, 1, 0.68, 1)`;
-    canvas.style.transform = `rotate(${targetAngle}rad)`;
+  const spinDuration = 2.5 + Math.random() * 1.5; // random duration for natural spin
 
-    setTimeout(() => {
-      spinning = false;
-      angle = targetAngle % (2 * Math.PI);
-    }, spinDuration * 1000);
-  }
+  // reset transition to start from 0 each spin
+  canvas.style.transition = 'none';
+  canvas.style.transform = `rotate(0rad)`;
+  void canvas.offsetWidth; // force reflow
+
+  // animate spin
+  canvas.style.transition = `transform ${spinDuration}s cubic-bezier(0.33, 1, 0.68, 1)`;
+  canvas.style.transform = `rotate(${targetAngle}rad)`;
+
+  setTimeout(() => {
+    spinning = false;
+    angle = targetAngle % (2 * Math.PI); // store new angle
+  }, spinDuration * 1000);
+}
 
   buildBtn.addEventListener("click", buildSpinner);
   spinnerContainer.addEventListener("click", spin);
