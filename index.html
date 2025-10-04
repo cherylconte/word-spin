@@ -109,37 +109,37 @@ Date</textarea>
   }
 
 function spin() {
-  if (spinning || numbers.length === 0) return;
+  if (spinning || items.length === 0) return;
   spinning = true;
 
-  const sliceAngle = 2 * Math.PI / numbers.length;
+  const sliceAngle = 2 * Math.PI / items.length;
 
-  // pick a truly random target number
-  const targetIndex = Math.floor(Math.random() * numbers.length);
+  // pick a random target word index
+  const targetIndex = Math.floor(Math.random() * items.length);
 
-  // extra rotations for visual effect
+  // extra full rotations for speed
   const extraRotations = Math.floor(Math.random() * 10) + 10;
 
-  // compute the target angle
+  // calculate target angle so the chosen word lands at the arrow
   const targetAngle = extraRotations * 2 * Math.PI +
-                      (numbers.length - targetIndex) * sliceAngle - sliceAngle / 2;
+                      (items.length - targetIndex) * sliceAngle - sliceAngle / 2;
 
-  // reset rotation instantly
+  // reset rotation instantly to current angle
   canvas.style.transition = 'none';
   canvas.style.transform = `rotate(${angle}rad)`;
   void canvas.offsetWidth; // force reflow
 
-  // animate the spin
-  const spinDuration = 3; // seconds
-  canvas.style.transition = `transform ${spinDuration}s cubic-bezier(0.33,1,0.68,1)`;
+  // animate spin
+  canvas.style.transition = 'transform 3s cubic-bezier(0.33,1,0.68,1)';
   canvas.style.transform = `rotate(${targetAngle}rad)`;
 
   // finish spin
   setTimeout(() => {
     spinning = false;
-    angle = targetAngle % (2 * Math.PI);
-  }, spinDuration * 1000);
+    angle = targetAngle % (2 * Math.PI); // normalize for next spin
+  }, 3000);
 }
+
 
 
 
