@@ -66,7 +66,6 @@ Date</textarea>
   let stopping = false;
   let spinSpeed = 0;
   let animationFrameId;
-  let lastIndex = -1; // track last landed word
 
   canvas.width = 500;
   canvas.height = 500;
@@ -113,45 +112,31 @@ Date</textarea>
     });
   }
 
-  function animateSpin(targetIndex) {
+  function animateSpin() {
     angle += spinSpeed;
     canvas.style.transform = `rotate(${angle}rad)`;
 
     if (stopping) {
       spinSpeed *= 0.97; // friction
-
-      // stop when slow enough, snapping to target slice
       if (spinSpeed < 0.002) {
         cancelAnimationFrame(animationFrameId);
         spinning = false;
         stopping = false;
         spinSpeed = 0;
-        // snap to target slice to avoid landing on same word visually
-        const sliceAngle = 2 * Math.PI / items.length;
-        angle = (items.length - targetIndex) * sliceAngle - sliceAngle / 2;
         angle = angle % (2 * Math.PI);
-        lastIndex = targetIndex;
-        canvas.style.transform = `rotate(${angle}rad)`;
         return;
       }
     }
 
-    animationFrameId = requestAnimationFrame(() => animateSpin(targetIndex));
+    animationFrameId = requestAnimationFrame(animateSpin);
   }
 
   function spin() {
-    if (!spinning && items.length > 1) {
-      // pick random target index not equal to lastIndex
-      let targetIndex;
-      do {
-        targetIndex = Math.floor(Math.random() * items.length);
-      } while (targetIndex === lastIndex);
-
-      // start spin
+    if (!spinning && items.length > 0) {
       spinSpeed = 0.25 + Math.random() * 0.15; // random initial speed
       spinning = true;
       stopping = false;
-      animateSpin(targetIndex);
+      animateSpin();
     } else if (spinning && !stopping) {
       stopping = true;
     }
@@ -171,4 +156,5 @@ Date</textarea>
   buildSpinner();
 })();
 </script>
+
 
