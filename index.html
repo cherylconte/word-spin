@@ -5,116 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Customizable Text Spinner</title>
 <style>
- body { font-family: Arial, sans-serif; text-align: center; margin: 0; background: #ffffff; }<script>
-(() => {
-  const canvas = document.getElementById("spinner");
-  const ctx = canvas.getContext("2d");
-  const buildBtn = document.getElementById("buildBtn");
-  const addColorBtn = document.getElementById("addColorBtn");
-  const colorPickersDiv = document.getElementById("colorPickers");
-  const spinnerContainer = document.getElementById("spinner-container");
-
-  let items = [];
-  let colors = [];
-  let angle = 0;
-  let spinning = false;
-  let stopping = false;
-  let spinSpeed = 0;
-  let animationFrameId;
-
-  canvas.width = 500;
-  canvas.height = 500;
-
-  function getColors() {
-    return Array.from(colorPickersDiv.querySelectorAll('input[type=color]')).map(input => input.value);
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    background: #ffffff; /* Changed to white */
   }
-
-  function buildSpinner() {
-    const fontSizeInput = parseInt(document.getElementById("fontSize").value) || 30;
-    colors = getColors();
-    const rawItems = document.getElementById("items").value;
-    items = rawItems.split("\n").map(s => s.trim()).filter(s => s);
-    drawSpinner(fontSizeInput);
+  #controls {
+    padding: 15px;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
   }
-
-  function drawSpinner(fontSize) {
-    const radius = canvas.width / 2;
-    const sliceAngle = (2 * Math.PI) / items.length;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    items.forEach((item, i) => {
-      const startAngle = i * sliceAngle;
-      const endAngle = (i + 1) * sliceAngle;
-
-      // slice
-      ctx.beginPath();
-      ctx.moveTo(radius, radius);
-      ctx.arc(radius, radius, radius, startAngle, endAngle);
-      ctx.closePath();
-      ctx.fillStyle = colors[i % colors.length];
-      ctx.fill();
-      ctx.stroke();
-
-      // text
-      ctx.save();
-      ctx.translate(radius, radius);
-      ctx.rotate(startAngle + sliceAngle / 2);
-      ctx.textAlign = "right";
-      ctx.fillStyle = "#000";
-      ctx.font = `bold ${fontSize}px Arial`;
-      ctx.fillText(item, radius - 10, 10);
-      ctx.restore();
-    });
-  }
-
-  function animateSpin() {
-    angle += spinSpeed;
-    canvas.style.transform = `rotate(${angle}rad)`;
-
-    if (stopping) {
-      spinSpeed *= 0.97; // friction to slow down
-      if (spinSpeed < 0.002) {
-        cancelAnimationFrame(animationFrameId);
-        spinning = false;
-        stopping = false;
-        spinSpeed = 0;
-        angle = angle % (2 * Math.PI);
-        return;
-      }
-    }
-
-    animationFrameId = requestAnimationFrame(animateSpin);
-  }
-
-  function spin() {
-    if (!spinning && items.length > 0) {
-      // Start spinning
-      spinSpeed = 0.25 + Math.random() * 0.15;
-      spinning = true;
-      stopping = false;
-      animateSpin();
-    } else if (spinning && !stopping) {
-      // Stop spinning on second click
-      stopping = true;
-    }
-  }
-
-  buildBtn.addEventListener("click", buildSpinner);
-  spinnerContainer.addEventListener("click", spin);
-  spinnerContainer.addEventListener("touchstart", spin);
-
-  addColorBtn.addEventListener("click", () => {
-    const newColor = document.createElement("input");
-    newColor.type = "color";
-    newColor.value = "#ffffff";
-    colorPickersDiv.insertBefore(newColor, addColorBtn);
-  });
-
-  buildSpinner();
-})();
-</script>
-; }
-  #controls { padding: 15px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
   #controls div { display: flex; flex-direction: column; min-width: 120px; }
   label { font-size: 0.9rem; margin-bottom: 4px; }
   textarea, input[type=number], input[type=color] { padding: 5px; font-size: 1rem; }
@@ -225,13 +130,12 @@ Date</textarea>
     canvas.style.transform = `rotate(${angle}rad)`;
 
     if (stopping) {
-      spinSpeed *= 0.97; // friction to slow down
+      spinSpeed *= 0.97; // friction
       if (spinSpeed < 0.002) {
         cancelAnimationFrame(animationFrameId);
         spinning = false;
         stopping = false;
         spinSpeed = 0;
-        angle = angle % (2 * Math.PI);
         return;
       }
     }
@@ -241,14 +145,12 @@ Date</textarea>
 
   function spin() {
     if (!spinning && items.length > 0) {
-      // Start spinning
-      spinSpeed = 0.25 + Math.random() * 0.15;
+      spinSpeed = 0.25 + Math.random() * 0.15; // initial speed
       spinning = true;
       stopping = false;
       animateSpin();
     } else if (spinning && !stopping) {
-      // Stop spinning on second click
-      stopping = true;
+      stopping = true; // second click stops
     }
   }
 
@@ -266,5 +168,8 @@ Date</textarea>
   buildSpinner();
 })();
 </script>
+
+</body>
+</html>
 
 
